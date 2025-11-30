@@ -25,39 +25,75 @@ public class TomaServiceImpl implements TomaService {
     @Autowired
     private MedicacionRepository medicacionRepository;
 
+    /**
+     * Devuelve todas las tomas registradas para un paciente.
+     */
     @Override
     public List<Toma> listarPorPaciente(Long pacienteId) {
         return tomaRepository.findByPaciente_Id(pacienteId);
     }
 
+    /**
+     * Devuelve las tomas dentro de un intervalo de fechas.
+     */
     @Override
     public List<Toma> listarEntreFechas(Long pacienteId, LocalDateTime desde, LocalDateTime hasta) {
-        return tomaRepository.findByPaciente_IdAndProgramadaParaBetweenOrderByProgramadaParaAsc(pacienteId, desde, hasta);
+        return tomaRepository.findByPaciente_IdAndProgramadaParaBetweenOrderByProgramadaParaAsc(
+                pacienteId,
+                desde,
+                hasta
+        );
     }
 
+    /**
+     * Devuelve las tomas programadas para fechas futuras.
+     */
     @Override
     public List<Toma> listarFuturas(Long pacienteId, LocalDateTime desde) {
-        return tomaRepository.findByPaciente_IdAndProgramadaParaAfterOrderByProgramadaParaAsc(pacienteId, desde);
+        return tomaRepository.findByPaciente_IdAndProgramadaParaAfterOrderByProgramadaParaAsc(
+                pacienteId,
+                desde
+        );
     }
 
+    /**
+     * Crea una toma asociada a un paciente y una medicación.
+     */
     @Override
     public Toma crearToma(Long pacienteId, Long medicacionId, Toma toma) {
-        Paciente paciente = pacienteRepository.findById(pacienteId).orElseThrow(() -> new ResourceNotFoundException("Paciente no encontrado"));
-        Medicacion medicacion = medicacionRepository.findById(medicacionId).orElseThrow(() -> new ResourceNotFoundException("Medicación no encontrada"));
+
+        Paciente paciente = pacienteRepository
+                .findById(pacienteId)
+                .orElseThrow(() -> new ResourceNotFoundException("Paciente no encontrado"));
+
+        Medicacion medicacion = medicacionRepository
+                .findById(medicacionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Medicación no encontrada"));
 
         toma.setPaciente(paciente);
         toma.setMedicacion(medicacion);
+
         return tomaRepository.save(toma);
     }
 
+    /**
+     * Marca una toma como realizada y guarda la fecha del momento.
+     */
     @Override
     public Toma marcarComoTomada(Long tomaId) {
-        Toma toma = tomaRepository.findById(tomaId).orElseThrow(() -> new ResourceNotFoundException("Toma no encontrada"));
+        Toma toma = tomaRepository
+                .findById(tomaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Toma no encontrada"));
+
         toma.setTomada(true);
         toma.setFechaDeToma(LocalDateTime.now());
+
         return tomaRepository.save(toma);
     }
 
+    /**
+     * Elimina una toma por su id.
+     */
     @Override
     public void eliminarToma(Long tomaId) {
         if (!tomaRepository.existsById(tomaId)) {
@@ -66,15 +102,24 @@ public class TomaServiceImpl implements TomaService {
         tomaRepository.deleteById(tomaId);
     }
 
+    /**
+     * Actualiza los datos de una toma.
+     */
     @Override
     public Toma actualizarToma(Long tomaId, Toma datos) {
-        Toma existente = tomaRepository.findById(tomaId).orElseThrow(() -> new ResourceNotFoundException("Toma no encontrada"));
+
+        Toma existente = tomaRepository
+                .findById(tomaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Toma no encontrada"));
 
         existente.setProgramadaPara(datos.getProgramadaPara());
         existente.setNotas(datos.getNotas());
 
         if (datos.getMedicacion() != null && datos.getMedicacion().getId() != null) {
-            Medicacion medicacion = medicacionRepository.findById(datos.getMedicacion().getId()).orElseThrow(() -> new ResourceNotFoundException("Medicación no encontrada"));
+            Medicacion medicacion = medicacionRepository
+                    .findById(datos.getMedicacion().getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Medicación no encontrada"));
+
             existente.setMedicacion(medicacion);
         }
 

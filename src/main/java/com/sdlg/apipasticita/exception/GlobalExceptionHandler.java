@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
     // Manejo de excepciones generales (500)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGlobalException(Exception ex) {
-        ex.printStackTrace(); // útil durante desarrollo
+        ex.printStackTrace();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", ex.toString()));
     }
 }

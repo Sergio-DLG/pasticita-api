@@ -9,29 +9,47 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+/**
+ * Entidad que representa una cita asociada a un paciente.
+ * Estructura básica:
+ *  - id -> Identificador autogenerado.
+ *  - paciente -> Relación muchos a uno con la entidad Paciente.
+ *  - fechaCita -> Fecha y hora programadas para la cita.
+ *  - descripcion -> Información breve y opcional.
+ *  - anotacion -> Campo de texto extenso y opcional.
+ */
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "citas")
 @Entity
+@Table(name = "citas")
 public class Cita {
+
+    /** Identificador único de la cita. */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
+    /**
+     * Paciente al que pertenece la cita.
+     * La anotación JsonIgnore evita ciclos de serialización y reduce datos innecesarios.
+     * La relación es obligatoria (optional = false).
+     */
     @ManyToOne(optional = false)
     @JoinColumn(name = "paciente_id")
     @JsonIgnore
-    Paciente paciente;
+    private Paciente paciente;
 
+    /** Fecha y hora programadas para la cita. Este campo es obligatorio. */
     @Column(nullable = false)
-    LocalDateTime fechaCita;
+    private LocalDateTime fechaCita;
 
+    /** Descripción breve y opcional de la cita. Máximo 255 caracteres. */
     @Column(length = 255)
-    String descripcion;
+    private String descripcion;
 
+    /** Anotación larga y opcional. Se almacena como texto tipo LOB. */
     @Lob
-    String anotacion;
-
+    private String anotacion;
 }

@@ -24,17 +24,22 @@ public class CitaServiceImpl implements CitaService {
 
     @Override
     public List<Cita> listarPorPacienteDesde(Long pacienteId, LocalDateTime desde) {
-        return citaRepository.findByPaciente_IdAndFechaCitaGreaterThanEqualOrderByFechaCitaAsc(pacienteId, desde);
+        // Citas desde una fecha concreta
+        return citaRepository
+                .findByPaciente_IdAndFechaCitaGreaterThanEqualOrderByFechaCitaAsc(pacienteId, desde);
     }
 
     @Override
     public List<Cita> listarTodasPorPaciente(Long pacienteId) {
+        // Todas las citas del paciente
         return citaRepository.findByPaciente_Id(pacienteId);
     }
 
     @Override
     public Cita crearCita(Long pacienteId, Cita cita) {
-        Paciente paciente = pacienteRepository.findById(pacienteId).orElseThrow(() -> new ResourceNotFoundException("Paciente no encontrado"));
+        // Comprueba el paciente y asigna la cita
+        Paciente paciente = pacienteRepository.findById(pacienteId)
+                .orElseThrow(() -> new ResourceNotFoundException("Paciente no encontrado"));
 
         cita.setPaciente(paciente);
         return citaRepository.save(cita);
@@ -42,8 +47,11 @@ public class CitaServiceImpl implements CitaService {
 
     @Override
     public Cita actualizarCita(Long citaId, Cita citaDatos) {
-        Cita existente = citaRepository.findById(citaId).orElseThrow(() -> new ResourceNotFoundException("Cita no encontrada"));
+        // Busca la cita existente
+        Cita existente = citaRepository.findById(citaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cita no encontrada"));
 
+        // Actualiza campos permitidos
         existente.setFechaCita(citaDatos.getFechaCita());
         existente.setDescripcion(citaDatos.getDescripcion());
         existente.setAnotacion(citaDatos.getAnotacion());
@@ -53,6 +61,7 @@ public class CitaServiceImpl implements CitaService {
 
     @Override
     public void eliminarCita(Long citaId) {
+        // Elimina si existe
         if (!citaRepository.existsById(citaId)) {
             throw new ResourceNotFoundException("Cita no encontrada");
         }

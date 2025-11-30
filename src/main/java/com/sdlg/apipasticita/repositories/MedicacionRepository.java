@@ -6,13 +6,15 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * Repositorio JPA para la entidad Medicacion.
+ */
 @Repository
 public interface MedicacionRepository extends JpaRepository<Medicacion, Long> {
 
-    // Buscar por nombre exacto, no lo uso
-    List<Medicacion> findByNombre(String nombre);
-
-    // Buscar por nombre que contenga el texto (para autocompletar o buscar)
+    /**
+     * Devuelve las medicaciones cuyo nombre contiene
+     * el texto indicado, ignorando mayúsculas y minúsculas.
+     */
     List<Medicacion> findByNombreContainingIgnoreCase(String nombre);
-
 }

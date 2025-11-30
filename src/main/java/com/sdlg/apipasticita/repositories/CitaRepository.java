@@ -7,17 +7,23 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Repositorio JPA para la entidad Cita.
+ */
 @Repository
 public interface CitaRepository extends JpaRepository<Cita, Long> {
 
-    // Todas las citas de un paciente
+    /**
+     * Devuelve todas las citas asociadas a un paciente.
+     */
     List<Cita> findByPaciente_Id(Long pacienteId);
 
-    // Citas futuras (desde una fecha)
-    List<Cita> findByPaciente_IdAndFechaCitaGreaterThanEqualOrderByFechaCitaAsc(Long pacienteId, LocalDateTime fechaDesde);
-
-    // Citas pasadas, no lo uso
-    List<Cita> findByPaciente_IdAndFechaCitaBeforeOrderByFechaCitaDesc(Long pacienteId, LocalDateTime fechaHasta);
-
-
+    /**
+     * Devuelve las citas cuya fecha es igual o posterior
+     * a la indicada, ordenadas por fecha ascendente.
+     */
+    List<Cita> findByPaciente_IdAndFechaCitaGreaterThanEqualOrderByFechaCitaAsc(
+            Long pacienteId,
+            LocalDateTime fechaDesde
+    );
 }

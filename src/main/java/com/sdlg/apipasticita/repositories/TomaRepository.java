@@ -7,22 +7,34 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Repositorio JPA para la entidad Toma.
+ * Permite consultar tomas por paciente y por fecha.
+ */
 @Repository
 public interface TomaRepository extends JpaRepository<Toma, Long> {
 
-
-    // Todas las tomas de un paciente
+    /**
+     * Devuelve todas las tomas asociadas a un paciente.
+     */
     List<Toma> findByPaciente_Id(Long pacienteId);
 
-    // Tomas programadas entre dos fechas (por ejemplo, para mostrar las del día actual)
-    List<Toma> findByPaciente_IdAndProgramadaParaBetweenOrderByProgramadaParaAsc(Long pacienteId, LocalDateTime desde, LocalDateTime hasta);
+    /**
+     * Devuelve tomas dentro de un rango de fechas,
+     * ordenadas por fecha programada.
+     */
+    List<Toma> findByPaciente_IdAndProgramadaParaBetweenOrderByProgramadaParaAsc(
+            Long pacienteId,
+            LocalDateTime desde,
+            LocalDateTime hasta
+    );
 
-    // Tomas futuras
-    List<Toma> findByPaciente_IdAndProgramadaParaAfterOrderByProgramadaParaAsc(Long pacienteId, LocalDateTime fecha);
-
-    // Tomas ya realizadas, no lo uso
-    List<Toma> findByPaciente_IdAndTomadaTrueOrderByProgramadaParaDesc(Long pacienteId);
-
-    // Tomas pendientes, no lo uso
-    List<Toma> findByPaciente_IdAndTomadaFalseOrderByProgramadaParaAsc(Long pacienteId);
+    /**
+     * Devuelve tomas futuras a partir de una fecha,
+     * ordenadas por fecha programada.
+     */
+    List<Toma> findByPaciente_IdAndProgramadaParaAfterOrderByProgramadaParaAsc(
+            Long pacienteId,
+            LocalDateTime fecha
+    );
 }
